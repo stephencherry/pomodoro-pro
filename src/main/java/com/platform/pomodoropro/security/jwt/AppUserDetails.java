@@ -1,4 +1,4 @@
-package com.platform.pomodoropro.service.jwt;
+package com.platform.pomodoropro.security.jwt;
 
 import com.platform.pomodoropro.entity.model.ROLE;
 import com.platform.pomodoropro.entity.model.STATUS;
@@ -34,7 +34,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-       return getUser().getUsername();
+        return getUser().getPhone();
     }
 
     @Override

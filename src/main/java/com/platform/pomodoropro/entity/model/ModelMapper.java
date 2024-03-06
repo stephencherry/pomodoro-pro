@@ -13,6 +13,7 @@ public interface ModelMapper {
     @Mapping(target = "firstname", expression = "java(entity.getFirstname())")
     @Mapping(target = "lastname", expression = "java(entity.getLastname())")
     @Mapping(target = "email", expression = "java(entity.getEmail())")
+    @Mapping(target = "phone", expression = "java(entity.getPhone().toString())")
     @Mapping(target = "status", expression = "java(entity.getStatus().toString())")
     @Mapping(target = "role", expression = "java(entity.getRole().toString())")
     @Mapping(target = "gender", expression = "java(entity.getGender().toString())")

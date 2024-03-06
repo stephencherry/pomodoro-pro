@@ -1,4 +1,4 @@
-package com.platform.pomodoropro.service.jwt;
+package com.platform.pomodoropro.security.jwt;
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

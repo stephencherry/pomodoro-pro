@@ -23,6 +23,7 @@ public class ModelMapperImpl implements ModelMapper{
         userMapper.firstname = userEntity.getFirstname();
         userMapper.lastname = userEntity.getLastname();
         userMapper.email = userEntity.getEmail();
+        userMapper.phone = userEntity.getPhone();
         userMapper.status = userEntity.getStatus().toString();
         userMapper.role = userEntity.getRole().toString();
         userMapper.gender = userEntity.getGender().toString();

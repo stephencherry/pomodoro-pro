@@ -1,4 +1,4 @@
-package com.platform.pomodoropro.service.jwt;
+package com.platform.pomodoropro.security.jwt;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
