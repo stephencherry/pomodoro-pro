@@ -1,27 +1,30 @@
 package com.platform.pomodoropro.service.jwt;
 
+import com.platform.pomodoropro.entity.model.ROLE;
+import com.platform.pomodoropro.entity.model.STATUS;
 import com.platform.pomodoropro.entity.model.UserEntity;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
-
 public class AppUserDetails implements UserDetails {
+    @Getter
     private final UserEntity user;
     private final Set<? super GrantedAuthority> grantedAuthorities = new HashSet<>();
 
     public AppUserDetails(UserEntity user) {
         this.user = user;
-        Set<UserEntity.ROLE> userRoleSet = Collections.singleton(user.getRole);
+        Set<ROLE> userRoleSet = Collections.singleton(user.getRole());
         grantedAuthorities.addAll(userRoleSet.stream()
                 .map(userRole -> new SimpleGrantedAuthority(userRole.name())).toList());
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.unmodifiableList(new ArrayList(grantedAuthorities));
+    public List getAuthorities() {
+        return Collections.unmodifiableList(new ArrayList<>(grantedAuthorities));
     }
 
     @Override
@@ -31,18 +34,17 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+       return getUser().getUsername();
     }
-
 
     @Override
     public boolean isAccountNonExpired() {
-        return getUser().getStatus() == UserEntity.STATUS.ACTIVATED;
+        return getUser().getStatus() == STATUS.ACTIVATED;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return getUser().getStatus() != UserEntity.STATUS.SUSPENDED;
+        return getUser().getStatus() != STATUS.SUSPENDED;
     }
 
     @Override
@@ -56,11 +58,8 @@ public class AppUserDetails implements UserDetails {
     }
 
     private boolean isValidStatus() {
-        return getUser().getStatus().equals(UserEntity.STATUS.ACTIVATED);
+        return getUser().getStatus().equals(STATUS.ACTIVATED);
     }
 
-    public UserEntity getUser() {
-        return user;
-    }
 }
-}
+

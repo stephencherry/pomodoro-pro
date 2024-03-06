@@ -25,11 +25,20 @@ public class UserEntity extends BaseEntity{
     private String lastname;
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ROLE role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private STATUS status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(10) default 'NEUTRAL'")
+    private GENDER gender;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    public UserEntity userEntity;
 
-    public enum ROLE {
-        USER, MODERATOR, ADMIN
-    }
 }

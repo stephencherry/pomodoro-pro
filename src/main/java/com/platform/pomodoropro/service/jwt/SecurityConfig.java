@@ -1,5 +1,8 @@
 package com.platform.pomodoropro.service.jwt;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.platform.pomodoropro.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +11,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +34,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    public ObjectMapper objectMapper(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
+    @Bean
+    public TokenProvider tokenProvider() {
+        return new TokenProvider(objectMapper());
+    }
+
+
+    @Bean
     public AppAuthenticationFailureHandler appAuthenticationFailureHandler(){
         return new AppAuthenticationFailureHandler(objectMapper());
     }
@@ -36,6 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AppAuthenticationSuccessHandler successHandler() {
+        return new AppAuthenticationSuccessHandler(objectMapper(), tokenProvider());
     }
 
     @Bean
@@ -49,12 +73,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return filter;
     }
 
+    private JWTConfigurer securityConfigAdapter() {
+        return new JWTConfigurer(tokenProvider());
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .addFilterBefore(new CORSFilter(), AbstractPreAuthenticatedProcessingFilter.class)
-//                .addFilterBefore(new WhitelistFilter(), SecurityContextHolderAwareRequestFilter.class)
+///             .addFilterBefore(new WhitelistFilter(), SecurityContextHolderAwareRequestFilter.class)
                 .addFilterAt(appAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/signin", "/signup", "/signup/verify", "/admin/signup", "/skills").permitAll() // Whitelisted endpoints

@@ -1,8 +1,11 @@
 package com.platform.pomodoropro.service.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NoArgsConstructor;
+import com.platform.pomodoropro.entity.model.ROLE;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,13 +16,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
@@ -37,20 +40,19 @@ public class TokenProvider {
     private final ObjectMapper objectMapper;
 
     /**
-     * Creates a jwt from the authentication object
+     * Creating JWT TOKEN from the authentication object
      * @param authentication
      * @return
      */
 
     public String createToken(Authentication authentication) {
-        AppUserDetails userDetails = (AppUserDetails) authentication.getPrincipal();
-
+       // AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
 
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
+        SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
 
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds * 1000);
@@ -58,7 +60,7 @@ public class TokenProvider {
                 .setSubject(((AppUserDetails)authentication.getPrincipal()).getUser().getEmail())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setIssuer(issuer)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
                 .setIssuedAt(new Date())
                 .setExpiration(validity)
                 .compact();
@@ -102,7 +104,7 @@ public class TokenProvider {
 
             boolean hasRole = principal.getAuthorities()
                     .stream()
-                    .anyMatch(authority -> authority.getAuthority().equalsIgnoreCase(String.valueOf(UserEntity.ROLE.ADMIN)));
+                    .anyMatch(authority -> authority.getAuthority().equalsIgnoreCase(String.valueOf(ROLE.ADMIN)));
 
             if (!hasRole){
                 notAuthorized = true;
