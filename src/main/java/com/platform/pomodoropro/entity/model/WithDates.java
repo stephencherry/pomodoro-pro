@@ -1,4 +1,4 @@
-package com.platform.pomodoropro.model;
+package com.platform.pomodoropro.entity.model;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;

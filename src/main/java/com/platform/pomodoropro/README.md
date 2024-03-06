@@ -1,1 +1,0 @@
-Pomodoro-pro for task managing application created for olujare's invention project.

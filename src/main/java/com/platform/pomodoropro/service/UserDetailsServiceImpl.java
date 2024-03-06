@@ -1,6 +1,6 @@
 package com.platform.pomodoropro.service;
 
-import com.platform.pomodoropro.model.UserEntity;
+import com.platform.pomodoropro.entity.model.UserEntity;
 import com.platform.pomodoropro.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

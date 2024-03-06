@@ -1,10 +1,11 @@
-package com.platform.pomodoropro.model;
+package com.platform.pomodoropro.entity.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 @Setter
 @Getter
@@ -24,7 +25,20 @@ public class UserEntity extends BaseEntity{
     private String lastname;
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ROLE role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private STATUS status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(10) default 'NEUTRAL'")
+    private GENDER gender;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    public UserEntity userEntity;
+
 }
